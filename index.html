@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本語れんしゅう — Luyện tiếng Nhật vỡ lòng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EC;
+    --paper2:#F1E9D8;
+    --line:#DED2B8;
+    --ink:#2E2A25;
+    --ink-soft:#6E6357;
+    --indigo:#2C4268;
+    --indigo-deep:#1C2C46;
+    --red:#BC3A32;
+    --red-deep:#8B2A25;
+    --gold:#B8912B;
+    --green:#3E7A52;
+    --white:#FFFDF7;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'M PLUS Rounded 1c',sans-serif;
+    color:var(--ink);
+    background-color:var(--paper);
+    background-image:
+      repeating-linear-gradient(0deg, var(--line) 0px, var(--line) 1px, transparent 1px, transparent 34px),
+      repeating-linear-gradient(90deg, var(--line) 0px, var(--line) 1px, transparent 1px, transparent 34px);
+    opacity:1;
+    min-height:100vh;
+    padding:0 0 60px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:36px 22px 0;}
+
+  header.top{text-align:center;margin-bottom:30px;}
+  .kanji-title{
+    font-size:34px;font-weight:800;color:var(--indigo-deep);
+    letter-spacing:0.04em;margin:0;
+  }
+  .sub-title{
+    font-size:14.5px;color:var(--ink-soft);margin:6px 0 0;font-weight:500;
+  }
+
+  /* HOME SCREEN */
+  .mode-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+  }
+  .mode-card{
+    background:var(--white);
+    border:1.5px solid var(--line);
+    border-radius:16px;
+    padding:18px 14px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+    text-align:center;
+  }
+  .mode-card:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(44,66,104,0.12);}
+  .mode-card:active{transform:translateY(0);}
+  .mode-badge{
+    width:54px;height:54px;border-radius:50%;
+    background:var(--indigo);
+    color:var(--white);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;font-weight:700;
+    flex:none;
+  }
+  .mode-card.red .mode-badge{background:var(--red);}
+  .mode-card.gold .mode-badge{background:var(--gold);}
+  .mode-card.green .mode-badge{background:var(--green);}
+  .mode-name{font-size:15px;font-weight:700;color:var(--ink);}
+  .mode-desc{font-size:12px;color:var(--ink-soft);line-height:1.4;}
+
+  /* QUIZ SCREEN */
+  .quiz-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:22px;flex-wrap:wrap;gap:10px;
+  }
+  .back-btn{
+    background:none;border:1.5px solid var(--line);border-radius:10px;
+    padding:7px 14px;font-size:13.5px;font-weight:700;color:var(--indigo-deep);
+    cursor:pointer;font-family:inherit;
+  }
+  .back-btn:hover{background:var(--paper2);}
+  .stat-pill{
+    display:flex;gap:10px;
+  }
+  .pill{
+    background:var(--white);border:1.5px solid var(--line);border-radius:999px;
+    padding:6px 14px;font-size:13px;font-weight:700;color:var(--ink);
+  }
+  .pill b{color:var(--indigo);}
+  .pill.streak b{color:var(--red);}
+
+  .quiz-card{
+    background:var(--white);
+    border:1.5px solid var(--line);
+    border-radius:20px;
+    padding:38px 26px 30px;
+    text-align:center;
+    position:relative;
+    min-height:150px;
+  }
+  .quiz-mode-label{
+    font-size:12.5px;font-weight:700;color:var(--ink-soft);
+    text-transform:none;margin:0 0 14px;letter-spacing:0.02em;
+  }
+  .prompt-emoji{
+    font-size:46px;line-height:1;margin:0 0 10px;
+    animation:popIn .35s ease-out;
+  }
+  @keyframes popIn{
+    0%{transform:scale(0.4) rotate(-10deg);opacity:0;}
+    70%{transform:scale(1.12) rotate(3deg);opacity:1;}
+    100%{transform:scale(1) rotate(0deg);}
+  }
+  .prompt-main{
+    font-size:44px;font-weight:800;color:var(--indigo-deep);
+    margin:0 0 6px;line-height:1.25;word-break:break-word;
+  }
+  .prompt-sub{
+    font-size:14px;color:var(--ink-soft);margin:0;font-weight:500;
+  }
+
+  .options-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px;
+  }
+  .opt-btn{
+    font-family:inherit;
+    background:var(--white);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:16px 10px;
+    font-size:16px;font-weight:700;color:var(--ink);
+    cursor:pointer;
+    transition:background .12s ease, border-color .12s ease;
+    min-height:56px;
+  }
+  .opt-btn:hover:not(:disabled){background:var(--paper2);border-color:var(--indigo);}
+  .opt-btn:disabled{cursor:default;}
+  .opt-btn.correct{background:#E9F3EC;border-color:var(--green);color:var(--green);}
+  .opt-btn.wrong{background:#FBEAE8;border-color:var(--red);color:var(--red-deep);}
+
+  .feedback-zone{
+    margin-top:20px;min-height:70px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+  }
+  .stamp{
+    display:inline-block;
+    border:3.5px solid var(--red);
+    color:var(--red);
+    border-radius:50%;
+    width:76px;height:76px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:800;
+    transform:rotate(-8deg);
+    animation:stampIn .28s ease-out;
+  }
+  .stamp.wrong{border-color:var(--ink-soft);color:var(--ink-soft);transform:rotate(6deg);}
+  @keyframes stampIn{
+    0%{transform:scale(1.8) rotate(-8deg);opacity:0;}
+    100%{transform:scale(1) rotate(-8deg);opacity:1;}
+  }
+  .feedback-text{font-size:13.5px;color:var(--ink-soft);}
+  .next-btn{
+    font-family:inherit;
+    background:var(--indigo);color:var(--white);
+    border:none;border-radius:12px;
+    padding:12px 28px;font-size:15px;font-weight:700;
+    cursor:pointer;margin-top:6px;
+  }
+  .next-btn:hover{background:var(--indigo-deep);}
+
+  @media (max-width:520px){
+    .kanji-title{font-size:27px;}
+    .prompt-main{font-size:34px;}
+    .options-grid{grid-template-columns:1fr;}
+    .quiz-card{padding:28px 16px 24px;}
+    .mode-grid{grid-template-columns:1fr;}
+    .mode-card{flex-direction:row;text-align:left;padding:14px 16px;}
+    .mode-desc{font-size:12px;}
+    .wrap{padding:24px 14px 0;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kanji-title">日本語れんしゅう</p>
+    <p class="sub-title">Trò chơi luyện tiếng Nhật vỡ lòng — chọn một chủ đề để bắt đầu</p>
+  </header>
+
+  <div id="app"></div>
+</div>
+
+<script>
+/* ---------- dữ liệu cơ bản ---------- */
+var hiraganaData = [
+  ["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],
+  ["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"],
+  ["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"],
+  ["た","ta"],["ち","chi"],["つ","tsu"],["て","te"],["と","to"],
+  ["な","na"],["に","ni"],["ぬ","nu"],["ね","ne"],["の","no"],
+  ["は","ha"],["ひ","hi"],["ふ","fu"],["へ","he"],["ほ","ho"],
+  ["ま","ma"],["み","mi"],["む","mu"],["め","me"],["も","mo"],
+  ["や","ya"],["ゆ","yu"],["よ","yo"],
+  ["ら","ra"],["り","ri"],["る","ru"],["れ","re"],["ろ","ro"],
+  ["わ","wa"],["を","wo"],["ん","n"]
+];
+var katakanaData = [
+  ["ア","a"],["イ","i"],["ウ","u"],["エ","e"],["オ","o"],
+  ["カ","ka"],["キ","ki"],["ク","ku"],["ケ","ke"],["コ","ko"],
+  ["サ","sa"],["シ","shi"],["ス","su"],["セ","se"],["ソ","so"],
+  ["タ","ta"],["チ","chi"],["ツ","tsu"],["テ","te"],["ト","to"],
+  ["ナ","na"],["ニ","ni"],["ヌ","nu"],["ネ","ne"],["ノ","no"],
+  ["ハ","ha"],["ヒ","hi"],["フ","fu"],["ヘ","he"],["ホ","ho"],
+  ["マ","ma"],["ミ","mi"],["ム","mu"],["メ","me"],["モ","mo"],
+  ["ヤ","ya"],["ユ","yu"],["ヨ","yo"],
+  ["ラ","ra"],["リ","ri"],["ル","ru"],["レ","re"],["ロ","ro"],
+  ["ワ","wa"],["ヲ","wo"],["ン","n"]
+];
+/* emoji liên tưởng theo âm đọc — giúp ghi nhớ cách phát âm */
+var soundEmoji = {
+  a:"🍎", i:"🍜", u:"🔄", e:"🥚", o:"🐙",
+  ka:"🚗", ki:"🔑", ku:"🪝", ke:"🦵", ko:"🪙",
+  sa:"🗡️", shi:"🎣", su:"🍣", se:"🪑", so:"🧵",
+  ta:"🍽️", chi:"🧀", tsu:"🌊", te:"🍵", to:"🦶",
+  na:"🍌", ni:"🥩", nu:"🌀", ne:"🐱", no:"🚫",
+  ha:"😄", hi:"☀️", fu:"🗻", he:"⛰️", ho:"🎅",
+  ma:"👩", mi:"🐛", mu:"🐮", me:"👁️", mo:"🌿",
+  ya:"⛵", yu:"♨️", yo:"🪀",
+  ra:"🐰", ri:"🍚", ru:"📏", re:"🌈", ro:"🤖",
+  wa:"⭕", wo:"🐺", n:"🤫"
+};
+var greetingData = [
+  ["Chào buổi sáng","おはようございます","🌅"],
+  ["Chào (buổi trưa/chiều)","こんにちは","🏮"],
+  ["Chào (buổi tối)","こんばんは","🌆"],
+  ["Chúc ngủ ngon","おやすみなさい","🌙"],
+  ["Tạm biệt","さようなら","👋"],
+  ["Hẹn gặp lại","またね","🤞"],
+  ["Cảm ơn","ありがとうございます","🙏"],
+  ["Xin lỗi","すみません","🙇"],
+  ["Không sao / không có gì","どういたしまして","😊"],
+  ["Rất vui được gặp bạn (lần đầu)","はじめまして","🤝"],
+  ["Mong bạn giúp đỡ (làm quen)","よろしくお願いします","🙇‍♀️"],
+  ["Xin mời (khi ăn)","いただきます","🍚"],
+  ["Con đi học đây / con đi đây","いってきます","🚪"],
+  ["Con về rồi / tôi về rồi","ただいま","🏠"]
+];
+var introData = [
+  ["Tôi là người Việt Nam","わたしはベトナムじんです","🇻🇳"],
+  ["Tôi là người Nhật","わたしはにほんじんです","🇯🇵"],
+  ["Tôi là người Hàn Quốc","わたしはかんこくじんです","🇰🇷"],
+  ["Tôi là học sinh / sinh viên","わたしはがくせいです","🎒"],
+  ["Tôi là giáo viên","わたしはせんせいです","👩‍🏫"],
+  ["Tôi là nhân viên công ty","わたしはかいしゃいんです","💼"],
+  ["Tôi là kỹ sư","わたしはエンジニアです","⚙️"],
+  ["Tôi là bác sĩ","わたしはいしゃです","🩺"],
+  ["Sở thích của tôi là đọc sách","しゅみはどくしょです","📚"],
+  ["Sở thích của tôi là xem phim","しゅみはえいがをみることです","🎬"],
+  ["Sở thích của tôi là nghe nhạc","しゅみはおんがくをきくことです","🎧"],
+  ["Sở thích của tôi là du lịch","しゅみはりょこうです","✈️"],
+  ["Sở thích của tôi là thể thao","しゅみはスポーツです","⚽"],
+  ["Sở thích của tôi là nấu ăn","しゅみはりょうりです","🍳"]
+];
+
+/* ---------- thuật toán đọc số tiếng Nhật ---------- */
+var onesKana = {1:"いち",2:"に",3:"さん",4:"よん",5:"ご",6:"ろく",7:"なな",8:"はち",9:"きゅう"};
+var hyakuForms = {1:"ひゃく",2:"にひゃく",3:"さんびゃく",4:"よんひゃく",5:"ごひゃく",6:"ろっぴゃく",7:"ななひゃく",8:"はっぴゃく",9:"きゅうひゃく"};
+var senForms = {1:"せん",2:"にせん",3:"さんぜん",4:"よんせん",5:"ごせん",6:"ろくせん",7:"ななせん",8:"はっせん",9:"きゅうせん"};
+
+function fourDigitReading(n){
+  if(n===0) return "";
+  var thousands=Math.floor(n/1000), r1=n%1000;
+  var hundreds=Math.floor(r1/100), r2=r1%100;
+  var tens=Math.floor(r2/10), onesDigit=r2%10;
+  var s="";
+  if(thousands>0) s+=senForms[thousands];
+  if(hundreds>0) s+=hyakuForms[hundreds];
+  if(tens>0) s+= (tens===1? "じゅう" : onesKana[tens]+"じゅう");
+  if(onesDigit>0) s+=onesKana[onesDigit];
+  return s;
+}
+function numberToKana(n){
+  if(n===0) return "ぜろ";
+  var units=["","まん","おく","ちょう"];
+  var chunks=[], num=n;
+  while(num>0){ chunks.push(num%10000); num=Math.floor(num/10000); }
+  var result="";
+  for(var i=chunks.length-1;i>=0;i--){
+    var chunk=chunks[i];
+    if(chunk===0) continue;
+    var cr=fourDigitReading(chunk);
+    if(i>0){ if(chunk===1) cr="いち"; result+=cr+units[i]; }
+    else result+=cr;
+  }
+  return result;
+}
+function ageToKana(n){
+  if(n===20) return "はたち";
+  if(n===1) return "いっさい";
+  if(n===8) return "はっさい";
+  var base=numberToKana(n);
+  if(n%10===1) return base.slice(0,-2)+"いっさい";
+  if(n%10===8) return base.slice(0,-2)+"はっさい";
+  if(n%10===0) return base.slice(0,-3)+"じゅっさい";
+  return base+"さい";
+}
+function yearToKana(n){
+  var base=numberToKana(n);
+  if(base.slice(-2)==="よん") base=base.slice(0,-1);
+  return base+"ねん";
+}
+var monthKana=["","いちがつ","にがつ","さんがつ","しがつ","ごがつ","ろくがつ","しちがつ","はちがつ","くがつ","じゅうがつ","じゅういちがつ","じゅうにがつ"];
+var dayKana=["","ついたち","ふつか","みっか","よっか","いつか","むいか","なのか","ようか","ここのか","とおか",
+"じゅういちにち","じゅうににち","じゅうさんにち","じゅうよっか","じゅうごにち","じゅうろくにち","じゅうしちにち","じゅうはちにち","じゅうくにち","はつか",
+"にじゅういちにち","にじゅうににち","にじゅうさんにち","にじゅうよっか","にじゅうごにち","にじゅうろくにち","にじゅうしちにち","にじゅうはちにち","にじゅうくにち","さんじゅうにち","さんじゅういちにち"];
+
+/* ---------- hàm phụ trợ ---------- */
+function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function shuffle(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){ var j=randInt(0,i); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+function pickN(arr,n,excludeIdx){
+  var pool=arr.map(function(v,i){return i;}).filter(function(i){return i!==excludeIdx;});
+  pool=shuffle(pool);
+  return pool.slice(0,n);
+}
+function uniquePush(list,val){
+  if(val!==undefined && val!==null && list.indexOf(val)===-1) list.push(val);
+}
+
+/* ---------- các chế độ ---------- */
+var MODES = [
+  {key:"hiragana", name:"Hiragana", desc:"Đọc chữ ひらがな", badge:"あ", cls:""},
+  {key:"katakana", name:"Katakana", desc:"Đọc chữ カタカナ", badge:"ア", cls:"red"},
+  {key:"numbers",  name:"Đếm số",   desc:"Số đến 1 trăm triệu", badge:"数", cls:"gold"},
+  {key:"date",     name:"Ngày tháng năm", desc:"年 月 日", badge:"日", cls:"green"},
+  {key:"age",      name:"Tuổi",     desc:"〜歳", badge:"歳", cls:""},
+  {key:"price",    name:"Giá tiền", desc:"〜円", badge:"¥", cls:"red"},
+  {key:"greeting", name:"Chào hỏi", desc:"Câu chào hằng ngày", badge:"礼", cls:"gold"},
+  {key:"intro",    name:"Giới thiệu bản thân", desc:"Quốc tịch · nghề nghiệp · sở thích", badge:"私", cls:"green"}
+];
+
+/* sinh câu hỏi cho từng chế độ, trả về {main, sub, options:[strings], correctIndex} */
+function genKanaQuestion(dataset){
+  var idx=randInt(0,dataset.length-1);
+  var correct=dataset[idx][1];
+  var wrongIdx=pickN(dataset,3,idx);
+  var opts=[correct].concat(wrongIdx.map(function(i){return dataset[i][1];}));
+  opts=shuffle(opts);
+  var emoji = soundEmoji[correct] || "🈶";
+  return {main:dataset[idx][0], sub:"Chọn cách đọc (romaji) đúng", options:opts, correct:correct, emoji:emoji};
+}
+function genVocabQuestion(dataset){
+  var idx=randInt(0,dataset.length-1);
+  var correct=dataset[idx][1];
+  var wrongIdx=pickN(dataset,3,idx);
+  var opts=[correct].concat(wrongIdx.map(function(i){return dataset[i][1];}));
+  opts=shuffle(opts);
+  var emoji = dataset[idx][2] || "🗒️";
+  return {main:dataset[idx][0], sub:"Chọn câu tiếng Nhật đúng", options:opts, correct:correct, emoji:emoji};
+}
+function genNumberQuestion(){
+  var n;
+  var tier=randInt(1,5);
+  if(tier===1) n=randInt(1,999);
+  else if(tier===2) n=randInt(1,99)*100;
+  else if(tier===3) n=randInt(1,999)*1000;
+  else if(tier===4) n=randInt(1,9999)*10000;
+  else n=100000000;
+  var correct=numberToKana(n);
+  var opts=[correct];
+  var tries=0;
+  while(opts.length<4 && tries<40){
+    tries++;
+    var offsets=[1,-1,10,-10,100,-100,2,-2];
+    var off=offsets[randInt(0,offsets.length-1)];
+    var candidate=n+off*(tier>=3?Math.pow(10,tier-1):1);
+    if(candidate>0 && candidate!==n){
+      var r=numberToKana(candidate);
+      if(opts.indexOf(r)===-1) opts.push(r);
+    }
+  }
+  while(opts.length<4){
+    var rn=randInt(1,99999999);
+    var rr=numberToKana(rn);
+    if(opts.indexOf(rr)===-1) opts.push(rr);
+  }
+  opts=shuffle(opts.slice(0,4));
+  return {main:n.toLocaleString('en-US'), sub:"Chọn cách đọc đúng", options:opts, correct:correct, emoji:"🔢"};
+}
+function genAgeQuestion(){
+  var age=randInt(1,99);
+  var correct=ageToKana(age);
+  var opts=[correct];
+  var cands=[age+1,age-1,age+10,age-10,age+2,age-2].filter(function(a){return a>0 && a<=99 && a!==age;});
+  cands=shuffle(cands);
+  for(var i=0;i<cands.length && opts.length<4;i++){
+    var r=ageToKana(cands[i]);
+    if(opts.indexOf(r)===-1) opts.push(r);
+  }
+  while(opts.length<4){
+    var rn=randInt(1,99);
+    var rr=ageToKana(rn);
+    if(opts.indexOf(rr)===-1) opts.push(rr);
+  }
+  opts=shuffle(opts.slice(0,4));
+  return {main:age+"歳", sub:"Chọn cách đọc tuổi đúng", options:opts, correct:correct, emoji:"🎂"};
+}
+function genPriceQuestion(){
+  var bases=[randInt(1,99)*10, randInt(1,99)*100, randInt(1,999)*100, randInt(1,999)];
+  var price=bases[randInt(0,bases.length-1)];
+  if(price<=0) price=100;
+  var correct=numberToKana(price)+"えん";
+  var opts=[correct];
+  var cands=[price*10, Math.round(price/10), price+100, price-100, price+10, price-10].filter(function(p){return p>0 && p!==price;});
+  cands=shuffle(cands);
+  for(var i=0;i<cands.length && opts.length<4;i++){
+    var r=numberToKana(cands[i])+"えん";
+    if(opts.indexOf(r)===-1) opts.push(r);
+  }
+  while(opts.length<4){
+    var rn=randInt(1,999999);
+    var rr=numberToKana(rn)+"えん";
+    if(opts.indexOf(rr)===-1) opts.push(rr);
+  }
+  opts=shuffle(opts.slice(0,4));
+  return {main:"¥"+price.toLocaleString('en-US'), sub:"Chọn cách đọc giá tiền đúng", options:opts, correct:correct, emoji:"💴"};
+}
+function genDateQuestion(){
+  var year=randInt(1999,2026);
+  var month=randInt(1,12);
+  var day=randInt(1,28);
+  var correct=yearToKana(year)+" "+monthKana[month]+" "+dayKana[day];
+  var wrongDay, wrongMonth, wrongYear;
+  do{ wrongDay=randInt(1,28); }while(wrongDay===day);
+  do{ wrongMonth=randInt(1,12); }while(wrongMonth===month);
+  do{ wrongYear=randInt(1999,2026); }while(wrongYear===year);
+  var opts=[
+    correct,
+    yearToKana(year)+" "+monthKana[month]+" "+dayKana[wrongDay],
+    yearToKana(year)+" "+monthKana[wrongMonth]+" "+dayKana[day],
+    yearToKana(wrongYear)+" "+monthKana[month]+" "+dayKana[day]
+  ];
+  opts=shuffle(opts);
+  return {main:year+"年"+month+"月"+day+"日", sub:"Chọn cách đọc ngày tháng năm đúng", options:opts, correct:correct, emoji:"📅"};
+}
+
+function generateQuestion(modeKey){
+  switch(modeKey){
+    case "hiragana": return genKanaQuestion(hiraganaData);
+    case "katakana": return genKanaQuestion(katakanaData);
+    case "numbers": return genNumberQuestion();
+    case "date": return genDateQuestion();
+    case "age": return genAgeQuestion();
+    case "price": return genPriceQuestion();
+    case "greeting": return genVocabQuestion(greetingData);
+    case "intro": return genVocabQuestion(introData);
+  }
+}
+
+/* ---------- trạng thái & render ---------- */
+var state = { screen:"home", modeKey:null, score:0, streak:0, count:0, question:null, answered:false };
+var appEl = document.getElementById('app');
+
+function renderHome(){
+  var html = '<div class="mode-grid">';
+  MODES.forEach(function(m){
+    html += '<div class="mode-card '+m.cls+'" onclick="startMode(\''+m.key+'\')">'+
+      '<div class="mode-badge">'+m.badge+'</div>'+
+      '<div class="mode-name">'+m.name+'</div>'+
+      '<div class="mode-desc">'+m.desc+'</div>'+
+    '</div>';
+  });
+  html += '</div>';
+  appEl.innerHTML = html;
+}
+
+function startMode(key){
+  state.screen="quiz"; state.modeKey=key; state.score=0; state.streak=0; state.count=0;
+  nextQuestion();
+}
+
+function goHome(){
+  state.screen="home";
+  renderHome();
+}
+
+function nextQuestion(){
+  state.question = generateQuestion(state.modeKey);
+  state.answered = false;
+  state.count += 1;
+  renderQuiz();
+}
+
+function renderQuiz(){
+  var mode = MODES.filter(function(m){return m.key===state.modeKey;})[0];
+  var q = state.question;
+  var html = '';
+  html += '<div class="quiz-topbar">';
+  html += '<button class="back-btn" onclick="goHome()">← Trang chủ</button>';
+  html += '<div class="stat-pill"><span class="pill">Câu <b>'+state.count+'</b></span>'+
+          '<span class="pill">Điểm <b>'+state.score+'</b></span>'+
+          '<span class="pill streak">Chuỗi đúng <b>'+state.streak+'</b></span></div>';
+  html += '</div>';
+
+  html += '<div class="quiz-card">';
+  html += '<p class="quiz-mode-label">'+mode.name+' &middot; '+mode.desc+'</p>';
+  html += '<p class="prompt-emoji">'+(q.emoji||'')+'</p>';
+  html += '<p class="prompt-main">'+q.main+'</p>';
+  html += '<p class="prompt-sub">'+q.sub+'</p>';
+  html += '<div class="options-grid" id="optionsGrid">';
+  q.options.forEach(function(opt, i){
+    html += '<button class="opt-btn" data-idx="'+i+'" onclick="selectAnswer('+i+')">'+opt+'</button>';
+  });
+  html += '</div>';
+  html += '<div class="feedback-zone" id="feedbackZone"></div>';
+  html += '</div>';
+
+  appEl.innerHTML = html;
+}
+
+function selectAnswer(i){
+  if(state.answered) return;
+  state.answered = true;
+  var q = state.question;
+  var chosen = q.options[i];
+  var isCorrect = chosen === q.correct;
+
+  var buttons = document.querySelectorAll('#optionsGrid .opt-btn');
+  buttons.forEach(function(btn, idx){
+    btn.disabled = true;
+    if(q.options[idx]===q.correct) btn.classList.add('correct');
+    else if(idx===i) btn.classList.add('wrong');
+  });
+
+  if(isCorrect){ state.score += 10; state.streak += 1; }
+  else { state.streak = 0; }
+
+  document.querySelectorAll('.stat-pill .pill b')[0].textContent = state.count;
+  document.querySelectorAll('.stat-pill .pill b')[1].textContent = state.score;
+  document.querySelectorAll('.stat-pill .pill b')[2].textContent = state.streak;
+
+  var fz = document.getElementById('feedbackZone');
+  var stampHtml = isCorrect
+    ? '<div class="stamp">正解</div><p class="feedback-text">🎉 Chính xác! Đáp án: '+q.correct+'</p>'
+    : '<div class="stamp wrong">✕</div><p class="feedback-text">Chưa đúng. Đáp án đúng là: '+q.correct+'</p>';
+  fz.innerHTML = stampHtml + '<button class="next-btn" onclick="nextQuestion()">Câu tiếp theo →</button>';
+}
+
+renderHome();
+</script>
+</body>
+</html>
